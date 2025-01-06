@@ -1,31 +1,36 @@
 //your code here
-const images = document.querySelectorAll("[id^='drag']");
 
-let draggedElement = null;
+document.addEventListener("DOMContentLoaded", () => {
+  const draggableItems = document.querySelectorAll("[id^='drag']");
+  let draggedElement = null;
 
-// Add drag event listeners to each element
-images.forEach((image) => {
-  image.addEventListener("dragstart", (e) => {
-    draggedElement = e.target; // Store the element being dragged
-    e.target.classList.add("selected");
-  });
+  draggableItems.forEach((item) => {
+    // Drag start event
+    item.addEventListener("dragstart", (event) => {
+      draggedElement = event.target; // Store the element being dragged
+      event.target.classList.add("dragging");
+    });
 
-  image.addEventListener("dragend", (e) => {
-    e.target.classList.remove("selected"); // Remove highlight after drag
-    draggedElement = null; // Reset the dragged element
-  });
+    // Drag end event
+    item.addEventListener("dragend", (event) => {
+      event.target.classList.remove("dragging");
+      draggedElement = null; // Clear the dragged element
+    });
 
-  image.addEventListener("dragover", (e) => {
-    e.preventDefault(); // Allow dropping
-  });
+    // Drag over event
+    item.addEventListener("dragover", (event) => {
+      event.preventDefault(); // Allow dropping
+    });
 
-  image.addEventListener("drop", (e) => {
-    e.preventDefault(); // Prevent default drop behavior
-    if (draggedElement && draggedElement !== e.target) {
-      // Swap the innerHTML of the two elements
-      const tempHTML = e.target.innerHTML;
-      e.target.innerHTML = draggedElement.innerHTML;
-      draggedElement.innerHTML = tempHTML;
-    }
+    // Drop event
+    item.addEventListener("drop", (event) => {
+      event.preventDefault();
+      if (draggedElement && draggedElement !== event.target) {
+        // Swap the innerHTML of the dragged and target elements
+        const tempHTML = event.target.innerHTML;
+        event.target.innerHTML = draggedElement.innerHTML;
+        draggedElement.innerHTML = tempHTML;
+      }
+    });
   });
 });
