@@ -1,41 +1,31 @@
 //your code here
-// Select all draggable items
-const images = document.querySelectorAll(".image");
+const images = document.querySelectorAll("[id^='drag']");
 
-// Variables to track the dragged item and its content
-let draggedItem = null;
+let draggedElement = null;
 
-// Add drag event listeners to each image
+// Add drag event listeners to each element
 images.forEach((image) => {
-  // When drag starts
   image.addEventListener("dragstart", (e) => {
-    draggedItem = e.target; // Store the dragged item
-    setTimeout(() => {
-      e.target.style.opacity = "0.5"; // Make the dragged item semi-transparent
-    }, 0);
+    draggedElement = e.target; // Store the element being dragged
+    e.target.classList.add("selected");
   });
 
-  // When drag ends
   image.addEventListener("dragend", (e) => {
-    setTimeout(() => {
-      e.target.style.opacity = "1"; // Restore opacity
-    }, 0);
-    draggedItem = null; // Clear the dragged item
+    e.target.classList.remove("selected"); // Remove highlight after drag
+    draggedElement = null; // Reset the dragged element
   });
 
-  // When a draggable enters a valid drop target
   image.addEventListener("dragover", (e) => {
-    e.preventDefault(); // Allow drop
+    e.preventDefault(); // Allow dropping
   });
 
-  // When a draggable is dropped onto a valid target
   image.addEventListener("drop", (e) => {
-    e.preventDefault(); // Prevent default behavior
-    if (draggedItem !== e.target) {
-      // Swap the innerHTML (or images) of the dragged and target items
-      const draggedContent = draggedItem.innerHTML;
-      draggedItem.innerHTML = e.target.innerHTML;
-      e.target.innerHTML = draggedContent;
+    e.preventDefault(); // Prevent default drop behavior
+    if (draggedElement && draggedElement !== e.target) {
+      // Swap the innerHTML of the two elements
+      const tempHTML = e.target.innerHTML;
+      e.target.innerHTML = draggedElement.innerHTML;
+      draggedElement.innerHTML = tempHTML;
     }
   });
 });
