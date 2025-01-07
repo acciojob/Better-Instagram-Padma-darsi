@@ -1,52 +1,46 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("parent");
-  const draggableItems = container.querySelectorAll("div");
+  const draggableItems = container.querySelectorAll("[id^='div']");
 
-  let draggedItem = null;
+  let draggedElement = null;
 
+  // Add event listeners to each draggable item
   draggableItems.forEach((item) => {
-    // When dragging starts
+    // When drag starts
     item.addEventListener("dragstart", (event) => {
-      draggedItem = event.target;
+      draggedElement = event.target; // Save reference to the dragged element
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", event.target.id); // Pass element ID
       event.target.classList.add("dragging");
     });
 
-    // When dragging ends
+    // When drag ends
     item.addEventListener("dragend", (event) => {
       event.target.classList.remove("dragging");
-      draggedItem = null;
+      draggedElement = null; // Reset reference
     });
 
-    // Allow dragover for all items
+    // Allow items to be droppable
     item.addEventListener("dragover", (event) => {
-      event.preventDefault(); // Allow dropping by preventing default behavior
+      event.preventDefault(); // Prevent default to allow dropping
+      event.dataTransfer.dropEffect = "move";
     });
 
-    // Highlight the droppable area on dragenter
-    item.addEventListener("dragenter", (event) => {
-      if (event.target !== draggedItem) {
-        event.target.classList.add("drag-over");
-      }
-    });
-
-    // Remove highlight on dragleave
-    item.addEventListener("dragleave", (event) => {
-      event.target.classList.remove("drag-over");
-    });
-
-    // Handle the drop event
+    // Handle drop event
     item.addEventListener("drop", (event) => {
       event.preventDefault();
-      if (draggedItem && event.target !== draggedItem) {
-        // Swap the background images of dragged and target items
-        const draggedStyle = draggedItem.style.backgroundImage;
-        draggedItem.style.backgroundImage = event.target.style.backgroundImage;
-        event.target.style.backgroundImage = draggedStyle;
-      }
 
-      // Remove highlight after dropping
-      event.target.classList.remove("drag-over");
+      const targetElement = event.target;
+
+      // Ensure the dragged and target elements are not the same
+      if (draggedElement && draggedElement !== targetElement) {
+        // Swap the `backgroundImage` styles of dragged and target elements
+        const draggedStyle = draggedElement.style.backgroundImage;
+        draggedElement.style.backgroundImage = targetElement.style.backgroundImage;
+        targetElement.style.backgroundImage = draggedStyle;
+      }
     });
   });
 });
+
