@@ -28,6 +28,14 @@
   margin: 10px;
   border: 2px solid #333;
   cursor: grab;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.2s ease;
+}
+
+.image.dragging {
+  opacity: 0.5;
+  transform: scale(1.1);
 }
 
 .flex {
@@ -35,4 +43,3 @@
   justify-content: center;
   align-items: center;
 }
-
