@@ -1,47 +1,52 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("parent");
   const draggableItems = container.querySelectorAll("div");
 
   let draggedItem = null;
 
-  draggableItems.forEach(item => {
+  draggableItems.forEach((item) => {
     // When dragging starts
-    item.addEventListener("dragstart", () => {
-      draggedItem = item;
-      setTimeout(() => item.style.opacity = "0.5", 0);
+    item.addEventListener("dragstart", (event) => {
+      draggedItem = event.target;
+      event.target.classList.add("dragging");
     });
 
     // When dragging ends
-    item.addEventListener("dragend", () => {
+    item.addEventListener("dragend", (event) => {
+      event.target.classList.remove("dragging");
       draggedItem = null;
-      item.style.opacity = "1";
     });
 
-    // When an item is dragged over a target
+    // Allow dragover for all items
     item.addEventListener("dragover", (event) => {
-      event.preventDefault(); // Necessary for allowing drop
+      event.preventDefault(); // Allow dropping by preventing default behavior
     });
 
-    // When a dragged item enters a droppable target
+    // Highlight the droppable area on dragenter
     item.addEventListener("dragenter", (event) => {
-      event.preventDefault();
-      item.style.border = "3px dashed #007BFF";
-    });
-
-    // When a dragged item leaves a droppable target
-    item.addEventListener("dragleave", () => {
-      item.style.border = "2px solid #ccc";
-    });
-
-    // When the dragged item is dropped
-    item.addEventListener("drop", () => {
-      if (draggedItem !== item) {
-        // Swap the background images of the dragged and target items
-        const draggedStyle = draggedItem.style.backgroundImage;
-        draggedItem.style.backgroundImage = item.style.backgroundImage;
-        item.style.backgroundImage = draggedStyle;
+      if (event.target !== draggedItem) {
+        event.target.classList.add("drag-over");
       }
-      item.style.border = "2px solid #ccc";
+    });
+
+    // Remove highlight on dragleave
+    item.addEventListener("dragleave", (event) => {
+      event.target.classList.remove("drag-over");
+    });
+
+    // Handle the drop event
+    item.addEventListener("drop", (event) => {
+      event.preventDefault();
+      if (draggedItem && event.target !== draggedItem) {
+        // Swap the background images of dragged and target items
+        const draggedStyle = draggedItem.style.backgroundImage;
+        draggedItem.style.backgroundImage = event.target.style.backgroundImage;
+        event.target.style.backgroundImage = draggedStyle;
+      }
+
+      // Remove highlight after dropping
+      event.target.classList.remove("drag-over");
     });
   });
 });
