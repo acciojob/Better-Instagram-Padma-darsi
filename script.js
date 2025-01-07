@@ -1,35 +1,47 @@
-//your code here
 document.addEventListener("DOMContentLoaded", () => {
-  const images = document.querySelectorAll(".image"); // Select all divs with the "image" class
-  let draggedElement = null; // Variable to store the element being dragged
+  const container = document.getElementById("parent");
+  const draggableItems = container.querySelectorAll("div");
 
-  images.forEach((image) => {
-    // Drag start event
-    image.addEventListener("dragstart", (event) => {
-      draggedElement = event.target; // Store the element being dragged
-      event.target.classList.add("selected"); // Add a visual indicator for dragging
+  let draggedItem = null;
+
+  draggableItems.forEach(item => {
+    // When dragging starts
+    item.addEventListener("dragstart", () => {
+      draggedItem = item;
+      setTimeout(() => item.style.opacity = "0.5", 0);
     });
 
-    // Drag end event
-    image.addEventListener("dragend", (event) => {
-      event.target.classList.remove("selected"); // Remove the visual indicator
-      draggedElement = null; // Clear the dragged element
+    // When dragging ends
+    item.addEventListener("dragend", () => {
+      draggedItem = null;
+      item.style.opacity = "1";
     });
 
-    // Drag over event (required to allow dropping)
-    image.addEventListener("dragover", (event) => {
-      event.preventDefault(); // Prevent default to allow drop
+    // When an item is dragged over a target
+    item.addEventListener("dragover", (event) => {
+      event.preventDefault(); // Necessary for allowing drop
     });
 
-    // Drop event
-    image.addEventListener("drop", (event) => {
+    // When a dragged item enters a droppable target
+    item.addEventListener("dragenter", (event) => {
       event.preventDefault();
-      if (draggedElement && draggedElement !== event.target) {
-        // Swap the background images of the dragged and target elements
-        const draggedImage = draggedElement.style.backgroundImage;
-        draggedElement.style.backgroundImage = event.target.style.backgroundImage;
-        event.target.style.backgroundImage = draggedImage;
+      item.style.border = "3px dashed #007BFF";
+    });
+
+    // When a dragged item leaves a droppable target
+    item.addEventListener("dragleave", () => {
+      item.style.border = "2px solid #ccc";
+    });
+
+    // When the dragged item is dropped
+    item.addEventListener("drop", () => {
+      if (draggedItem !== item) {
+        // Swap the background images of the dragged and target items
+        const draggedStyle = draggedItem.style.backgroundImage;
+        draggedItem.style.backgroundImage = item.style.backgroundImage;
+        item.style.backgroundImage = draggedStyle;
       }
+      item.style.border = "2px solid #ccc";
     });
   });
 });
